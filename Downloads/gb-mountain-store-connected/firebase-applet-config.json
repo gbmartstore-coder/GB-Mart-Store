@@ -1,0 +1,12 @@
+{
+  "projectId": "gb-mart-store",
+  "appId": "1:770637511391:web:c98df3b3b672930e36076a",
+  "apiKey": "AIzaSyANd37m74BhPOM0tC90bpc8XfTCn17XCMs",
+  "authDomain": "gb-mart-store.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "gb-mart-store.firebasestorage.app",
+  "messagingSenderId": "770637511391",
+  "measurementId": "G-767NRCNQT8",
+  "oAuthClientId": "",
+  "recaptchaSiteKey": ""
+}

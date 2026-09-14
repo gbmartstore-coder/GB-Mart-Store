@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Emails that are always treated as admin, mirrors ADMIN_EMAILS
+    // in src/admin-system/AuthContext.tsx. Keep these two lists in sync.
+    function isAdminEmail() {
+      return request.auth != null &&
+        request.auth.token.email in ['ibrargd44@gmail.com', 'najamd45@gmail.com'];
+    }
+
+    function isAdmin() {
+      return request.auth != null && (
+        isAdminEmail() ||
+        (
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        )
+      );
+    }
+
+    // Public storefront data: anyone can read (no login needed to browse
+    // the store), but only admins can add/edit/delete.
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /subcategories/{subcategoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Store-wide settings: publicly readable (e.g. shipping fee text),
+    // only admins can change.
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Orders are managed only inside the Admin Panel right now.
+    match /orders/{orderId} {
+      allow read, write: if isAdmin();
+    }
+
+    // User profiles (used for the admin role check itself).
+    match /users/{userId} {
+      // You can read your own profile; admins can read everyone's.
+      allow read: if request.auth != null &&
+        (request.auth.uid == userId || isAdmin());
+
+      // You can create your own profile on first login only.
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // You can update your own profile, but you may NOT change your own
+      // "role" field unless your email is a hardcoded admin email (the
+      // same auto-promotion the app already performs on login).
+      // Admins can update anyone's profile (e.g. to promote/demote roles).
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        (
+          request.auth.uid == userId &&
+          (
+            request.resource.data.role == resource.data.role ||
+            isAdminEmail()
+          )
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+  }
+}

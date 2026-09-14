@@ -1,0 +1,8 @@
+{
+  "name": "Remix Gilgit-Baltistan Mountain Store",
+  "description": "Premium e-commerce platform for authentic dry fruits, mountain honey, shilajit, traditional wear, and handicrafts from Gilgit-Baltistan, Pakistan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
