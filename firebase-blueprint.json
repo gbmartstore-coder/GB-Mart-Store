@@ -1,0 +1,160 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access control",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["admin", "customer"] },
+        "photoURL": { "type": "string", "maxLength": 1024 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "address": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product category for mountain goods",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "slug": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 500 },
+        "image": { "type": "string", "maxLength": 2048 },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "slug", "active"]
+    },
+    "Subcategory": {
+      "title": "Subcategory",
+      "description": "Subcategory linked to parent category",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "slug": { "type": "string", "maxLength": 100 },
+        "categoryId": { "type": "string", "maxLength": 128 },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "slug", "categoryId", "active"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Mountain store product offering",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 150 },
+        "slug": { "type": "string", "maxLength": 150 },
+        "categoryId": { "type": "string", "maxLength": 128 },
+        "subcategoryId": { "type": "string", "maxLength": 128 },
+        "description": { "type": "string", "maxLength": 3000 },
+        "price": { "type": "number" },
+        "salePrice": { "type": "number" },
+        "unit": { "type": "string", "maxLength": 50 },
+        "stock": { "type": "number" },
+        "images": { "type": "array" },
+        "featured": { "type": "boolean" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "slug", "categoryId", "price", "stock", "active"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer order placed through the storefront",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "address": { "type": "string", "maxLength": 500 },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "deliveryCharges": { "type": "number" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string", "maxLength": 64 },
+        "status": {
+          "type": "string",
+          "enum": ["Pending", "Confirmed", "Processing", "Shipped", "Delivered", "Cancelled"]
+        },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["customerId", "customerName", "phone", "address", "items", "total", "status"]
+    },
+    "Setting": {
+      "title": "Setting",
+      "description": "Storewide configuration and contact info",
+      "type": "object",
+      "properties": {
+        "storeName": { "type": "string", "maxLength": 100 },
+        "contactPhone": { "type": "string", "maxLength": 50 },
+        "contactEmail": { "type": "string", "maxLength": 100 },
+        "currency": { "type": "string", "maxLength": 10 },
+        "deliveryFee": { "type": "number" },
+        "freeDeliveryThreshold": { "type": "number" },
+        "announcementText": { "type": "string", "maxLength": 300 },
+        "address": { "type": "string", "maxLength": 200 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["storeName"]
+    },
+    "Banner": {
+      "title": "Banner",
+      "description": "Promotional hero banners for storefront",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150 },
+        "subtitle": { "type": "string", "maxLength": 300 },
+        "image": { "type": "string", "maxLength": 2048 },
+        "link": { "type": "string", "maxLength": 500 },
+        "buttonText": { "type": "string", "maxLength": 60 },
+        "active": { "type": "boolean" },
+        "order": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["title", "image", "active"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and role information"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Gilgit-Baltistan product categories"
+    },
+    "/subcategories/{subcategoryId}": {
+      "schema": "Subcategory",
+      "description": "Subcategories linked to categories"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Products catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer purchase orders"
+    },
+    "/settings/{settingId}": {
+      "schema": "Setting",
+      "description": "Global store configuration"
+    },
+    "/banners/{bannerId}": {
+      "schema": "Banner",
+      "description": "Storefront promotion banners"
+    }
+  }
+}
