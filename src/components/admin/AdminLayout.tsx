@@ -13,12 +13,12 @@ import {
   Mountain,
   Menu,
   X,
-  Database,
+  
   ShieldCheck,
   ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { seedInitialDatabase } from '../../services/db';
+
 
 export type AdminTab =
   | 'dashboard'
@@ -59,23 +59,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     { id: 'settings', label: 'Store Settings', icon: Settings },
   ] as const;
 
-  const handleSeed = async () => {
-    if (!window.confirm('Initialize or refresh authentic Gilgit-Baltistan products & categories in Firestore?')) {
-      return;
-    }
-    setSeeding(true);
-    setSeedSuccess('');
-    try {
-      const res = await seedInitialDatabase();
-      setSeedSuccess(`Successfully synchronized ${res.productsCount} products and ${res.categoriesCount} categories into Firestore!`);
-      setTimeout(() => setSeedSuccess(''), 6000);
-    } catch (err) {
-      console.error('Seeding error:', err);
-      alert('Seeding error: ' + (err instanceof Error ? err.message : String(err)));
-    } finally {
-      setSeeding(false);
-    }
-  };
+  
 
   return (
     <div className="min-h-screen bg-[#f4f2ee] text-stone-900 flex flex-col md:flex-row">
@@ -155,16 +139,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
         {/* Bottom Actions & User Profile */}
         <div className="p-4 border-t border-emerald-950/80 space-y-3">
-          {/* Database Synchronization tool */}
-          <button
-            onClick={handleSeed}
-            disabled={seeding}
-            className="w-full py-2 px-3 rounded-xl bg-emerald-950/80 hover:bg-emerald-900/80 border border-emerald-800/50 text-[11px] font-semibold text-emerald-200 flex items-center justify-center gap-2 transition disabled:opacity-50"
-            title="Populate or restore initial authentic Hunza & Skardu products"
-          >
-            <Database className="w-3.5 h-3.5 text-amber-400" />
-            <span>{seeding ? 'Syncing...' : 'Sync Firestore Catalog'}</span>
-          </button>
+          
 
           {/* User badge */}
           <div className="p-2.5 rounded-xl bg-black/20 border border-white/5 flex items-center justify-between">
@@ -221,13 +196,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </header>
 
-        {/* Global Notification */}
-        {seedSuccess && (
-          <div className="m-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center gap-2">
-            <Database className="w-4 h-4 text-emerald-700 flex-shrink-0" />
-            <span>{seedSuccess}</span>
-          </div>
-        )}
+        
 
         {/* Tab View Container */}
         <div className="p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto">
