@@ -597,9 +597,13 @@ export async function seedInitialDatabase(): Promise<{
     });
   }
 
-  // Products
-  for (const prod of INITIAL_PRODUCTS) {
-    batch.set(doc(db, 'products', prod.id), {
+  // Products - only create if product does not already exist
+for (const prod of INITIAL_PRODUCTS) {
+  const productRef = doc(db, 'products', prod.id);
+  const existingProduct = await getDoc(productRef);
+
+  if (!existingProduct.exists()) {
+    batch.set(productRef, {
       name: prod.name,
       slug: prod.slug,
       categoryId: prod.categoryId,
@@ -616,16 +620,22 @@ export async function seedInitialDatabase(): Promise<{
       updatedAt: now,
     });
   }
+}
 
-  // Banners
-  for (let i = 0; i < INITIAL_BANNERS.length; i++) {
-    const banner = INITIAL_BANNERS[i];
-    batch.set(doc(db, 'banners', `banner-${i + 1}`), {
+  // Banners - only create if banner does not already exist
+for (let i = 0; i < INITIAL_BANNERS.length; i++) {
+  const banner = INITIAL_BANNERS[i];
+  const bannerRef = doc(db, 'banners', `banner-${i + 1}`);
+  const existingBanner = await getDoc(bannerRef);
+
+  if (!existingBanner.exists()) {
+    batch.set(bannerRef, {
       ...banner,
       createdAt: now,
       updatedAt: now,
     });
   }
+}
 
   await batch.commit();
 
