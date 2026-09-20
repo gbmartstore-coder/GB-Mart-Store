@@ -76,7 +76,7 @@ const handleViewAllCategories = () => {
         </div>
 
         {/* Category Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
 
           {visibleCategories.map((cat) => {
             const isSelected = selectedCategory === cat.id;
@@ -113,11 +113,12 @@ const handleViewAllCategories = () => {
                 >
                   {cat.image ? (
                     <img
-                      src={cat.image}
-                      alt={cat.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+  src={cat.image}
+  alt={cat.name}
+  loading="lazy"
+  decoding="async"
+  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+/>
                   ) : (
                     <div className="w-full h-full bg-emerald-50 flex items-center justify-center">
                       <Layers className="w-8 h-8 text-emerald-600" />

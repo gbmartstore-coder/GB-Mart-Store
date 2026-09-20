@@ -30,11 +30,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ banners, onCtaClick }) =
     <section className="relative overflow-hidden bg-stone-900 text-white min-h-[260px] sm:min-h-[280px] md:min-h-[300px] flex items-center rounded-2xl mx-4 sm:mx-6 lg:mx-8 mt-3">
       {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={current.image}
-          alt={current.title}
-          className="w-full h-full object-cover object-center transition-all duration-700 brightness-[0.85] scale-105"
-        />
+       <img
+  src={current.image}
+  alt={current.title}
+  loading="eager"
+  fetchPriority="high"
+  decoding="async"
+  className="w-full h-full object-cover object-center transition-all duration-700 brightness-[0.8] scale-105"
+/>
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950/45 via-stone-950/20 to-transparent"/>
       </div>
 

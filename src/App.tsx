@@ -18,7 +18,6 @@ import {
   onSubcategoriesSnapshot,
   onBannersSnapshot,
   getStoreSettings,
-  seedInitialDatabase,
 } from './services/db';
 import {
   Product,
@@ -45,13 +44,47 @@ function StorefrontApp() {
   });
 
   // Firestore Real-Time Data
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
-  const [banners, setBanners] = useState<Banner[]>([]);
-  const [settings, setSettings] = useState<StoreSettings>(INITIAL_SETTINGS);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(() => {
+  try {
+    const cached = localStorage.getItem('gbmart_products');
+    return cached ? JSON.parse(cached) : [];
+  } catch {
+    return [];
+  }
+});
 
+const [categories, setCategories] = useState<Category[]>(() => {
+  try {
+    const cached = localStorage.getItem('gbmart_categories');
+    return cached ? JSON.parse(cached) : [];
+  } catch {
+    return [];
+  }
+});
+
+const [subcategories, setSubcategories] = useState<Subcategory[]>(() => {
+  try {
+    const cached = localStorage.getItem('gbmart_subcategories');
+    return cached ? JSON.parse(cached) : [];
+  } catch {
+    return [];
+  }
+});
+
+const [banners, setBanners] = useState<Banner[]>(() => {
+  try {
+    const cached = localStorage.getItem('gbmart_banners');
+    return cached ? JSON.parse(cached) : [];
+  } catch {
+    return [];
+  }
+});
+
+const [settings, setSettings] = useState<StoreSettings>(INITIAL_SETTINGS);
+
+const [loading, setLoading] = useState(() => {
+  return !localStorage.getItem('gbmart_products');
+});
   // Search & Filtering
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
@@ -90,19 +123,15 @@ function StorefrontApp() {
 
   // Real-time Firestore Subscriptions
   useEffect(() => {
-    let isInitialCheckDone = false;
 
     const unsubProducts = onProductsSnapshot(
       (prods) => {
         if (prods.length > 0) {
-          setProducts(prods);
-        } else {
+  setProducts(prods);
+  localStorage.setItem('gbmart_products', JSON.stringify(prods));
+} else {
           setProducts(INITIAL_PRODUCTS);
-          // Auto seed if database is completely empty on initial turn
-          if (!isInitialCheckDone) {
-            isInitialCheckDone = true;
-            seedInitialDatabase().catch((e) => console.log('Auto-seed check:', e));
-          }
+          
         }
         setLoading(false);
       },
@@ -116,7 +145,10 @@ function StorefrontApp() {
 
     const unsubCategories = onCategoriesSnapshot(
       (cats) => {
-        if (cats.length > 0) setCategories(cats);
+        if (cats.length > 0) {
+  setCategories(cats);
+  localStorage.setItem('gbmart_categories', JSON.stringify(cats));
+}
         else setCategories(INITIAL_CATEGORIES);
       },
       (err) => {
@@ -127,7 +159,10 @@ function StorefrontApp() {
 
     const unsubSubcategories = onSubcategoriesSnapshot(
       (subs) => {
-        if (subs.length > 0) setSubcategories(subs);
+        if (subs.length > 0) {
+  setSubcategories(subs);
+  localStorage.setItem('gbmart_subcategories', JSON.stringify(subs));
+}
         else setSubcategories(INITIAL_SUBCATEGORIES);
       },
       (err) => {
@@ -138,7 +173,10 @@ function StorefrontApp() {
 
     const unsubBanners = onBannersSnapshot(
       (bans) => {
-        if (bans.length > 0) setBanners(bans);
+        if (bans.length > 0) {
+  setBanners(bans);
+  localStorage.setItem('gbmart_banners', JSON.stringify(bans));
+}
         else setBanners(INITIAL_BANNERS.map((b, i) => ({ id: `banner-${i + 1}`, ...b })));
       },
       (err) => {
