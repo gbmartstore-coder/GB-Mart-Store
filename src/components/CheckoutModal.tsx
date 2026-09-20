@@ -56,13 +56,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ onOpenOrders }) =>
     try {
       let paymentScreenshotUrl = '';
 
-if (paymentMethod !== 'Cash on Delivery') {
-  if (!paymentScreenshot) {
-    setErrorMessage('Please upload your payment screenshot before confirming the order.');
-    setSubmitting(false);
-    return;
-  }
-
+if (paymentMethod !== 'Cash on Delivery' && paymentScreenshot) {
   paymentScreenshotUrl = await uploadImage(
     paymentScreenshot,
     'payment-proofs'
@@ -105,12 +99,16 @@ if (paymentMethod !== 'Cash on Delivery') {
 
       setPlacedOrderId(newOrderId);
       clearCart();
-    } catch (err) {
-      console.error('Failed to submit order:', err);
-      setErrorMessage('Failed to place order. Please verify your details and try again.');
-    } finally {
-      setSubmitting(false);
-    }
+    } catch (err: any) {
+  console.error('Failed to submit order:', err);
+
+  const errorCode = err?.code || 'unknown-error';
+  const errorText = err?.message || String(err);
+
+  setErrorMessage(`Order failed: ${errorCode} - ${errorText}`);
+} finally {
+  setSubmitting(false);
+}
   };
 
   const handleClose = () => {
