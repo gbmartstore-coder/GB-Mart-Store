@@ -16,7 +16,10 @@ import {
 } from 'lucide-react';
 import { Order, OrderStatus } from '../../types';
 import { updateOrderStatus } from '../../services/db';
-
+import emailjs from '@emailjs/browser';
+const EMAILJS_SERVICE_ID = 'service_6yz2hxo';
+const EMAILJS_TEMPLATE_ID = 'template_wc5qszb';
+const EMAILJS_PUBLIC_KEY = 'cIzwMXnJEQ4lCOQMX';
 interface AdminOrdersProps {
   orders: Order[];
 }
@@ -49,19 +52,72 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ orders }) => {
   });
 
   const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
-    setUpdatingId(orderId);
-    try {
-      await updateOrderStatus(orderId, newStatus);
-      if (selectedOrder && selectedOrder.id === orderId) {
-        setSelectedOrder({ ...selectedOrder, status: newStatus });
-      }
-    } catch (err) {
-      console.error('Error updating status:', err);
-      alert('Failed to update order status in Firestore.');
-    } finally {
-      setUpdatingId(null);
+  setUpdatingId(orderId);
+
+  try {
+    const order = orders.find((o) => o.id === orderId);
+
+    await updateOrderStatus(orderId, newStatus);
+
+    if (selectedOrder && selectedOrder.id === orderId) {
+      setSelectedOrder({ ...selectedOrder, status: newStatus });
     }
-  };
+    const statusMessages: Record<OrderStatus, string> = {
+  Pending: 'Your order has been received and is awaiting confirmation.',
+  Confirmed: 'Great news! Your order has been confirmed and will be processed shortly.',
+  Processing: 'Your order is currently being prepared for dispatch.',
+  Shipped: 'Your order has been shipped and is on its way to you.',
+  Delivered: 'Your order has been successfully delivered. Thank you for shopping with GB Mart Store!',
+  Cancelled: 'Your order has been cancelled. If you have any questions, please contact GB Mart Store.',
+};
+const statusHeadings: Record<OrderStatus, string> = {
+  Pending: 'Your Order Is Pending',
+  Confirmed: 'Your Order Has Been Confirmed!',
+  Processing: 'Your Order Is Being Processed!',
+  Shipped: 'Your Order Has Been Shipped!',
+  Delivered: 'Order Delivered Successfully!',
+  Cancelled: 'Your Order Has Been Cancelled',
+};
+    if (order?.email) {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          email: order.email,
+          customer_name: order.customerName,
+          order_id: order.id,
+          order_status: newStatus,
+          status_message: statusMessages[newStatus],
+          status_heading: statusHeadings[newStatus],
+          payment_method: order.paymentMethod,
+          order_items: order.items
+            .map(
+              (item) =>
+                `${item.name} × ${item.quantity} — Rs. ${(
+                  item.price * item.quantity
+                ).toLocaleString()}`
+            )
+            .join('\n'),
+          subtotal: order.subtotal.toLocaleString(),
+          delivery_charges: order.deliveryCharges.toLocaleString(),
+          total: order.total.toLocaleString(),
+          phone: order.phone,
+          address: order.address,
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+    }
+  } catch (err: any) {
+  console.error('Error updating status:', err);
+  console.error('EmailJS status:', err?.status);
+  console.error('EmailJS text:', err?.text);
+  alert(
+    `Status updated, but email failed: ${err?.status || ''} ${err?.text || err?.message || 'Unknown error'}`
+  );
+} finally {
+    setUpdatingId(null);
+  }
+};
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
@@ -305,6 +361,10 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ orders }) => {
                     <Phone className="w-3.5 h-3.5 text-emerald-800" />
                     <span>{selectedOrder.phone}</span>
                   </div>
+                  <div className="flex items-center gap-1.5 text-stone-600">
+  <span>✉</span>
+  <span>{selectedOrder.email}</span>
+</div>
                   <div className="text-stone-400 text-[11px]">
                     Customer ID: {selectedOrder.customerId}
                   </div>

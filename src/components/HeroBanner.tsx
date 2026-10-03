@@ -31,7 +31,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ banners, onCtaClick }) =
       {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0 z-0">
        <img
-  src={current.image}
+  src={
+    current.image.includes('res.cloudinary.com')
+      ? current.image.replace(
+          '/upload/',
+          '/upload/f_auto,q_auto,w_1600/'
+        )
+      : current.image
+  }
   alt={current.title}
   loading="eager"
   fetchPriority="high"

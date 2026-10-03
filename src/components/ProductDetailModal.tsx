@@ -58,10 +58,19 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         <div className="w-full md:w-1/2 p-6 bg-stone-50 flex flex-col justify-between border-b md:border-b-0 md:border-r border-stone-200">
           <div className="aspect-square w-full rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm relative">
             <img
-              src={currentImage}
-              alt={product.name}
-              className="w-full h-full object-cover object-center"
-            />
+  src={
+    currentImage.includes('res.cloudinary.com')
+      ? currentImage.replace(
+          '/upload/',
+          '/upload/f_auto,q_auto,w_1000/'
+        )
+      : currentImage
+  }
+  alt={product.name}
+  loading="eager"
+  decoding="async"
+  className="w-full h-full object-cover object-center"
+/>
             {product.featured && (
               <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase rounded bg-amber-400 text-gray-950 shadow-sm">
                 Featured Product
@@ -87,7 +96,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     idx === selectedImageIdx ? 'border-emerald-600 ring-2 ring-emerald-600/20' : 'border-gray-200 opacity-70 hover:opacity-100'
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                 <img
+  src={
+    img.includes('res.cloudinary.com')
+      ? img.replace('/upload/', '/upload/f_auto,q_auto,w_200/')
+      : img
+  }
+  alt=""
+  loading="lazy"
+  decoding="async"
+  className="w-full h-full object-cover"
+/>
                 </button>
               ))}
             </div>

@@ -5,7 +5,11 @@ import { useAuth } from '../context/AuthContext';
 import { createOrder } from '../services/db';
 import { uploadImage } from '../services/storage';
 import { OrderItem } from '../types';
-
+import emailjs from '@emailjs/browser';
+const EMAILJS_SERVICE_ID = 'service_6yz2hxo';
+const EMAILJS_TEMPLATE_ID = 'template_wc5qszb';
+const EMAILJS_ADMIN_TEMPLATE_ID = 'template_a3xddf8';
+const EMAILJS_PUBLIC_KEY = 'cIzwMXnJEQ4lCOQMX';
 interface CheckoutModalProps {
   onOpenOrders: () => void;
 }
@@ -23,6 +27,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ onOpenOrders }) =>
   const { currentUser, userProfile } = useAuth();
 
   const [customerName, setCustomerName] = useState(userProfile?.displayName || currentUser?.displayName || '');
+  const [email, setEmail] = useState(userProfile?.email || currentUser?.email || '');
   const [phone, setPhone] = useState(userProfile?.phone || '');
   const [address, setAddress] = useState(userProfile?.address || '');
   const [city, setCity] = useState('Islamabad');
@@ -83,6 +88,7 @@ if (paymentMethod !== 'Cash on Delivery' && paymentScreenshot) {
       const newOrderId = await createOrder({
         customerId,
         customerName: customerName.trim(),
+        email: email.trim(),
         phone: phone.trim(),
         address: fullAddress,
         items: orderItems,
@@ -96,12 +102,62 @@ if (paymentMethod !== 'Cash on Delivery' && paymentScreenshot) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
-
+       await emailjs.send(
+  EMAILJS_SERVICE_ID,
+  EMAILJS_TEMPLATE_ID,
+  {
+    email: email.trim(),
+    customer_name: customerName.trim(),
+    order_id: newOrderId,
+    order_status: 'Pending',
+    payment_method: paymentMethod,
+    order_items: orderItems
+      .map(
+        (item) =>
+          `${item.name} × ${item.quantity} — Rs. ${(
+            item.price * item.quantity
+          ).toLocaleString()}`
+      )
+      .join('\n'),
+    subtotal: subtotal.toLocaleString(),
+    delivery_charges: deliveryFee.toLocaleString(),
+    total: totalAmount.toLocaleString(),
+    phone: phone.trim(),
+    address: fullAddress,
+  },
+ EMAILJS_PUBLIC_KEY
+);
+await emailjs.send(
+  EMAILJS_SERVICE_ID,
+  EMAILJS_ADMIN_TEMPLATE_ID,
+  {
+    email: email.trim(),
+    customer_name: customerName.trim(),
+    order_id: newOrderId,
+    order_status: 'Pending',
+    payment_method: paymentMethod,
+    order_items: orderItems
+      .map(
+        (item) =>
+          `${item.name} × ${item.quantity} — Rs. ${(
+            item.price * item.quantity
+          ).toLocaleString()}`
+      )
+      .join('\n'),
+    subtotal: subtotal.toLocaleString(),
+    delivery_charges: deliveryFee.toLocaleString(),
+    total: totalAmount.toLocaleString(),
+    phone: phone.trim(),
+    address: fullAddress,
+  },
+  EMAILJS_PUBLIC_KEY
+);
       setPlacedOrderId(newOrderId);
       clearCart();
     } catch (err: any) {
   console.error('Failed to submit order:', err);
-
+  console.error('EmailJS status:', err?.status);
+  console.error('EmailJS text:', err?.text);
   const errorCode = err?.code || 'unknown-error';
   const errorText = err?.message || String(err);
 
@@ -253,7 +309,19 @@ if (paymentMethod !== 'Cash on Delivery' && paymentScreenshot) {
                     />
                   </div>
                 </div>
-
+                 <div>
+  <label className="block text-xs font-semibold text-stone-700 mb-1">
+    Email Address *
+  </label>
+  <input
+    type="email"
+    required
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    placeholder="e.g. customer@gmail.com"
+    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-sm"
+  />
+</div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-stone-700 mb-1">

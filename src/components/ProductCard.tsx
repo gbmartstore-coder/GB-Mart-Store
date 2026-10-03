@@ -37,11 +37,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Image and Badges */}
       <div className="relative aspect-square w-full overflow-hidden bg-gray-100 cursor-pointer" onClick={() => onOpenDetails(product)}>
         <img
-          src={mainImage}
-          alt={product.name}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-          loading="lazy"
-        />
+  src={
+    mainImage.includes('res.cloudinary.com')
+      ? mainImage.replace('/upload/', '/upload/f_auto,q_auto,w_600/')
+      : mainImage
+  }
+  alt={product.name}
+  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+  loading="lazy"
+  decoding="async"
+/>
 
         {/* Top Badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">

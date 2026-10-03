@@ -12,6 +12,7 @@ import { OrdersModal } from './components/OrdersModal';
 import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
 import { AdminPortal } from './components/admin/AdminPortal';
+import WhatsAppButton from './components/WhatsAppButton';
 import {
   onProductsSnapshot,
   onCategoriesSnapshot,
@@ -471,6 +472,8 @@ const visibleProducts =
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
       />
+       
+      <WhatsAppButton />
     </div>
   );
 }

@@ -112,8 +112,12 @@ const handleViewAllCategories = () => {
                   `}
                 >
                   {cat.image ? (
-                    <img
-  src={cat.image}
+                   <img
+  src={
+    cat.image.includes('res.cloudinary.com')
+      ? cat.image.replace('/upload/', '/upload/f_auto,q_auto,w_300/')
+      : cat.image
+  }
   alt={cat.name}
   loading="lazy"
   decoding="async"
