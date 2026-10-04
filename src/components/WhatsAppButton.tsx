@@ -32,9 +32,9 @@ const WhatsAppButton: React.FC = () => {
   }, [showPopup]);
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-5 right-5 z-50">
       {showPopup && (
-        <div className="relative w-[290px] rounded-2xl bg-white border border-stone-200 shadow-xl p-4">
+        <div className="fixed bottom-5 left-5 w-[235px] rounded-2xl bg-white border border-stone-200 shadow-xl p-4">
           <button
             type="button"
             onClick={handleClosePopup}
