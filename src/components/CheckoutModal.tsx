@@ -40,7 +40,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ onOpenOrders }) =>
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
-
+  const [placedOrderTotal, setPlacedOrderTotal] = useState(0);
   if (!isCheckoutOpen) return null;
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
@@ -102,56 +102,64 @@ if (paymentMethod !== 'Cash on Delivery' && paymentScreenshot) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
-       await emailjs.send(
-  EMAILJS_SERVICE_ID,
-  EMAILJS_TEMPLATE_ID,
-  {
-    email: email.trim(),
-    customer_name: customerName.trim(),
-    order_id: newOrderId,
-    order_status: 'Pending',
-    payment_method: paymentMethod,
-    order_items: orderItems
-      .map(
-        (item) =>
-          `${item.name} × ${item.quantity} — Rs. ${(
-            item.price * item.quantity
-          ).toLocaleString()}`
-      )
-      .join('\n'),
-    subtotal: subtotal.toLocaleString(),
-    delivery_charges: deliveryFee.toLocaleString(),
-    total: totalAmount.toLocaleString(),
-    phone: phone.trim(),
-    address: fullAddress,
-  },
- EMAILJS_PUBLIC_KEY
-);
-await emailjs.send(
-  EMAILJS_SERVICE_ID,
-  EMAILJS_ADMIN_TEMPLATE_ID,
-  {
-    email: email.trim(),
-    customer_name: customerName.trim(),
-    order_id: newOrderId,
-    order_status: 'Pending',
-    payment_method: paymentMethod,
-    order_items: orderItems
-      .map(
-        (item) =>
-          `${item.name} × ${item.quantity} — Rs. ${(
-            item.price * item.quantity
-          ).toLocaleString()}`
-      )
-      .join('\n'),
-    subtotal: subtotal.toLocaleString(),
-    delivery_charges: deliveryFee.toLocaleString(),
-    total: totalAmount.toLocaleString(),
-    phone: phone.trim(),
-    address: fullAddress,
-  },
-  EMAILJS_PUBLIC_KEY
-);
+     try {
+  await emailjs.send(
+    EMAILJS_SERVICE_ID,
+    EMAILJS_TEMPLATE_ID,
+    {
+      email: email.trim(),
+      customer_name: customerName.trim(),
+      order_id: newOrderId,
+      order_status: 'Pending',
+      payment_method: paymentMethod,
+      order_items: orderItems
+        .map(
+          (item) =>
+            `${item.name} × ${item.quantity} — Rs. ${(
+              item.price * item.quantity
+            ).toLocaleString()}`
+        )
+        .join('\n'),
+      subtotal: subtotal.toLocaleString(),
+      delivery_charges: deliveryFee.toLocaleString(),
+      total: totalAmount.toLocaleString(),
+      phone: phone.trim(),
+      address: fullAddress,
+    },
+    EMAILJS_PUBLIC_KEY
+  );
+
+  await emailjs.send(
+    EMAILJS_SERVICE_ID,
+    EMAILJS_ADMIN_TEMPLATE_ID,
+    {
+      email: email.trim(),
+      customer_name: customerName.trim(),
+      order_id: newOrderId,
+      order_status: 'Pending',
+      payment_method: paymentMethod,
+      order_items: orderItems
+        .map(
+          (item) =>
+            `${item.name} × ${item.quantity} — Rs. ${(
+              item.price * item.quantity
+            ).toLocaleString()}`
+        )
+        .join('\n'),
+      subtotal: subtotal.toLocaleString(),
+      delivery_charges: deliveryFee.toLocaleString(),
+      total: totalAmount.toLocaleString(),
+      phone: phone.trim(),
+      address: fullAddress,
+    },
+    EMAILJS_PUBLIC_KEY
+  );
+} catch (emailError) {
+  console.warn(
+    'Order saved successfully, but email notification failed:',
+    emailError
+  );
+}     setPlacedOrderTotal(subtotal + deliveryFee);
       setPlacedOrderId(newOrderId);
       clearCart();
     } catch (err: any) {
@@ -226,7 +234,7 @@ await emailjs.send(
                 </div>
                 <div className="flex justify-between pt-2 border-t border-stone-200 font-bold">
                   <span className="text-stone-700">Total Payable:</span>
-                  <span className="text-emerald-900 text-sm">Rs. {totalAmount.toLocaleString()}</span>
+                  <span className="text-emerald-900 text-sm">Rs. {placedOrderTotal.toLocaleString()}</span>
                 </div>
               </div>
 
