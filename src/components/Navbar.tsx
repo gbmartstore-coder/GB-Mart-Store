@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import gbMartLogo from '../assets/gb-mart-logo.png';
 import {
   Mountain,
   ShoppingBag,
@@ -56,9 +57,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between h-20 gap-4">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => onSelectCategory(null)}>
-            <div className="w-11 h-11 rounded-xl bg-emerald-700 flex items-center justify-center text-white shadow-sm">
-              <ShoppingBag className="w-6 h-6 text-white" />
-            </div>
+            <img
+  src={gbMartLogo}
+  alt="GB Mart Store"
+  className="w-14 h-14 rounded-full object-cover shrink-0"
+/>
             <div>
               <span className="font-bold text-lg sm:text-xl tracking-tight text-gray-900 block leading-tight font-sans">
                 {settings.storeName || 'GB Mart Store'}
