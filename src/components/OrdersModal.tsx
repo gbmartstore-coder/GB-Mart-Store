@@ -173,14 +173,11 @@ export const OrdersModal: React.FC<OrdersModalProps> = ({ isOpen, onClose, onOpe
                       </span>
                     </div>
 
-                    <div className="text-right">
-                      <span className="text-base font-bold text-emerald-900 block">
-                        Rs. {order.total.toLocaleString()}
-                      </span>
-                      <span className="text-[10px] text-stone-500 font-medium">
-                        {order.paymentMethod}
-                      </span>
-                    </div>
+                   <div className="text-right">
+  <span className="text-[10px] text-stone-500 font-medium">
+    {order.paymentMethod}
+  </span>
+</div>
                   </div>
 
                   {/* Items preview */}
@@ -197,7 +194,26 @@ export const OrdersModal: React.FC<OrdersModalProps> = ({ isOpen, onClose, onOpe
                       </div>
                     ))}
                   </div>
+                   <div className="mt-3 pt-3 border-t border-stone-200 space-y-2">
+  <div className="flex justify-between text-xs text-stone-600">
+    <span>Subtotal</span>
+    <span>Rs. {order.subtotal.toLocaleString()}</span>
+  </div>
 
+  <div className="flex justify-between text-xs text-stone-600">
+    <span>Delivery Charges</span>
+    <span>Rs. {order.deliveryCharges.toLocaleString()}</span>
+  </div>
+
+  <div className="flex justify-between items-center border-t border-stone-200 pt-2">
+    <span className="text-sm font-bold text-stone-900">
+      Grand Total
+    </span>
+    <span className="text-base font-bold text-emerald-800">
+      Rs. {order.total.toLocaleString()}
+    </span>
+  </div>
+</div>
                   {/* Shipping Address */}
                   <div className="pt-2 border-t border-stone-200 text-[11px] text-stone-500 flex items-center justify-between">
                     <span>Delivering to: <span className="text-stone-700 font-medium">{order.address}</span></span>

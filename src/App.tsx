@@ -35,7 +35,11 @@ import {
   INITIAL_BANNERS,
 } from './data/initialData';
 import { SlidersHorizontal, Sparkles, AlertCircle } from 'lucide-react';
-
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { TermsAndConditions } from './components/TermsAndConditions';
+import { DeliveryConditions } from './components/DeliveryConditions';
+import { AboutUs } from './components/AboutUs';
+import { ContactUs } from './components/ContactUs';
 function StorefrontApp() {
   // Navigation Route
   const [route, setRoute] = useState<'store' | 'admin'>(() => {
@@ -203,7 +207,21 @@ const [loading, setLoading] = useState(() => {
   if (route === 'admin') {
     return <AdminPortal onBackToStore={navigateToStore} />;
   }
-
+  if (window.location.pathname === '/privacy-policy') {
+  return <PrivacyPolicy />;
+}
+if (window.location.pathname === '/terms-and-conditions') {
+  return <TermsAndConditions />;
+}
+if (window.location.pathname === '/delivery-conditions') {
+  return <DeliveryConditions />;
+}
+if (window.location.pathname === '/about-us') {
+  return <AboutUs />;
+}
+if (window.location.pathname === '/contact-us') {
+  return <ContactUs />;
+}
   // Active products only for storefront
   const activeProducts = products.filter((p) => p.active);
 

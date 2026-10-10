@@ -96,12 +96,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           {/* Logo & Store Info */}
           <div className="p-6 border-b border-emerald-950/80 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-700/80 flex items-center justify-center text-white ring-1 ring-emerald-400/30">
-                <Mountain className="w-5 h-5 text-emerald-200" />
-              </div>
+              <img
+  src={new URL('../../assets/gb-mart-logo.png', import.meta.url).href}
+  alt="GB Mart Store"
+  className="w-10 h-10 rounded-full object-cover shrink-0"
+/>
               <div>
                 <span className="font-serif font-bold text-sm tracking-tight text-white block">
-                  GB Mountain Store
+                  GB Mart Store
                 </span>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400 block">
                   Firestore Backend

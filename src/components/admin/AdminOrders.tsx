@@ -303,9 +303,11 @@ const statusHeadings: Record<OrderStatus, string> = {
             {/* Header */}
             <div className="p-6 border-b border-stone-200 flex items-center justify-between bg-stone-50">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-800 text-white flex items-center justify-center font-serif font-bold">
-                  GB
-                </div>
+                <img
+  src={new URL('../../assets/gb-mart-logo.png', import.meta.url).href}
+  alt="GB Mart Store"
+  className="w-10 h-10 rounded-full object-cover shrink-0"
+/>
                 <div>
                   <h3 className="text-base font-bold text-stone-900 font-serif">
                     Order Details #{selectedOrder.id.slice(0, 8).toUpperCase()}

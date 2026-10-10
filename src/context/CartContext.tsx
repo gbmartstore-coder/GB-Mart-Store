@@ -93,9 +93,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, 0);
 
   const deliveryFee =
-    subtotal === 0 || subtotal >= (settings.freeDeliveryThreshold || 4000)
-      ? 0
-      : settings.deliveryFee || 250;
+  subtotal === 0 ||
+  subtotal >= (settings.freeDeliveryThreshold ?? 5000)
+    ? 0
+    : (settings.deliveryFee ?? 350);
 
   const totalAmount = subtotal + deliveryFee;
 
